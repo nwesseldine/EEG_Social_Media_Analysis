@@ -104,10 +104,12 @@ if __name__ == '__main__':
 	Author:
 		Original by [lmanso]
 		Documentation: [fcampelo]
-"""
-	if len(sys.argv) < 3:
-		print ('arg1: input dir\narg2: output file')
-		sys.exit(-1)
-	directory_path = sys.argv[1]
-	output_file = sys.argv[2]
+	"""
+	
+	# if len(sys.argv) < 3: # For use in calling the function from the command line
+	# 	print ('arg1: input dir\narg2: output file')
+	# 	sys.exit(-1)
+
+	directory_path = "dataset/original_data"
+	output_file = "dataset/output.csv"
 	gen_training_matrix(directory_path, output_file, cols_to_ignore = -1)
