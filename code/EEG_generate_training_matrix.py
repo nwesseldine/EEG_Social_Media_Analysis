@@ -14,6 +14,7 @@
 
 import os, sys
 import numpy as np
+import datetime
 from EEG_feature_extraction import generate_feature_vectors_from_samples
 
 
@@ -83,7 +84,7 @@ def gen_training_matrix(directory_path, output_file, cols_to_ignore):
 	print ('FINAL_MATRIX', FINAL_MATRIX.shape)
 	
 	# Shuffle rows
-	np.random.shuffle(FINAL_MATRIX)
+	# np.random.shuffle(FINAL_MATRIX)
 	
 	# Save to file
 	np.savetxt(output_file, FINAL_MATRIX, delimiter = ',',
@@ -110,6 +111,10 @@ if __name__ == '__main__':
 	# 	print ('arg1: input dir\narg2: output file')
 	# 	sys.exit(-1)
 
-	directory_path = "dataset/original_data"
-	output_file = "dataset/output.csv"
+	date = datetime.datetime.now().strftime('%Y-%m-%d_%H-%M')
+
+	target_dir = "original_data" # Change this one to change which data we're processing
+	directory_path = "datasets/" + target_dir
+
+	output_file = f"featuresets/{target_dir}_{date}.csv"
 	gen_training_matrix(directory_path, output_file, cols_to_ignore = -1)
