@@ -4,3 +4,6 @@ from EEG_Mendeley_cleaning import muse_clean
 for patient in range(1, 6):
     for experiment in range(1, 4):
         muse_clean(patient, experiment)
+        print(f"Patient {patient} Experiment {experiment} complete...")
+
+print("All done!")

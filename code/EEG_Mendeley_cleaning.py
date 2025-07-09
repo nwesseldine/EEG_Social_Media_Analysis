@@ -93,23 +93,22 @@ def muse_clean(subject_num: int, record_num: int) -> None:
     df.set_index('TimeStamp', inplace = True)
 
 
-    ## Removing observations with no data, and observations no change compared to previous observations
-
-    ### First step is to remove columns that get in the way of this process:
-    ### The `RAW_{}` columns, `AUX_RIGHT` column, and `Element` columns all contain meaningless changing 
-    ### values that inhibit the measuring of consistency between other relevant recorded values
-    relevant_columns = [col for col in df.columns]
-    for i in df.columns:
-        if "RAW" in i or "AUX" in i:
-            relevant_columns.remove(i)
-    relevant_columns.remove("Elements")
+    ## Removing observations with no data, and observations no change compared to the previous observation
 
     ### Remove all rows that do not fit the following criteria:
-    ###    - The entries in this row are all different from the previous rows (row is unique)
+    ###    - The entries in this row are all different from the previous row (row is unique)
     ###    - The majority of entries contain values, headband is on the head (row is meaningful)
     ###    - The entries are all taken with "good" readings from the sensors (row is accurate)
-    df.drop_duplicates(subset = relevant_columns, inplace = True)
-    df.dropna(subset = relevant_columns, inplace = True)
+    drop_list = []
+    previous_row = [i for i in df.iloc[0]]
+    for i in range(1, df.shape[0]):
+        current_row = [value for value in df.iloc[i]]
+        if previous_row == current_row:
+            drop_list.append(i)
+        else:
+            previous_row = current_row
+
+    df.drop(drop_list, axis = 0, inplace = True)
     df = df[(df["HeadBandOn"] == 1) & (df["HSI_TP9"] == 1) & (df["HSI_AF7"] == 1) & (df["HSI_AF8"] == 1) & (df["HSI_TP10"] == 1)]
 
 
@@ -121,3 +120,6 @@ def muse_clean(subject_num: int, record_num: int) -> None:
 
     ## Return to root directory
     os.chdir(f"../../..")
+
+
+muse_clean(1, 1)
