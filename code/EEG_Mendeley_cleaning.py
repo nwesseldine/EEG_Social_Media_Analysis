@@ -31,7 +31,7 @@ import os
 
 ## Reading in dataset (singular)
 #os.chdir('dataset/Mendeley')
-df = pd.read_csv('dataset/Mendeley/Subject_01/rec01_subject_01.csv')
+df = pd.read_csv('datasets/Mendeley/Subject_01/rec01_subject_01.csv')
 
 ## Exploratory Data Analysis
 """ 
@@ -86,7 +86,7 @@ def muse_clean(subject_num: int, record_num: int) -> None:
     """
 
     ## Reading in dataset
-    df = pd.read_csv(f'dataset/Mendeley/Subject_0{subject_num}/rec0{record_num}_subject_0{subject_num}.csv')
+    df = pd.read_csv(f'datasets/Mendeley/Subject_0{subject_num}/rec0{record_num}_subject_0{subject_num}.csv')
 
     ## Creating time-based indices using the `TimeStamp` column
     df['TimeStamp'] = pd.to_datetime(df['TimeStamp'], format='%Y-%m-%d %H:%M:%S.%f')
