@@ -67,12 +67,10 @@ df.drop_duplicates(subset = relevant_columns, inplace = True)
 df.dropna(subset = relevant_columns, inplace = True)
 df = df[(df["HeadBandOn"] == 1) & (df["HSI_TP9"] == 1) & (df["HSI_AF7"] == 1) & (df["HSI_AF8"] == 1) & (df["HSI_TP10"] == 1)]
 
-
-
-
+# -------------------------------------------------------------------------------------------------------------------------------
 
 ## Create a function with the above code that takes in a file path, returning a "cleaned" dataset according to the above criteria
-def muse_clean(subject_num: int, record_num: int) -> None:
+def muse_clean(filepath: str, filename: str, subject_num: int, record_num: int, new_folder: str = 'cleaneddatasets') -> None:
     """
     Inputs: The subject number (1-5) and the record number (1-3)
     Output: A file output (.csv) that returns a "cleaned" version of the raw data file
@@ -84,9 +82,12 @@ def muse_clean(subject_num: int, record_num: int) -> None:
       - The majority of entries contain values, headband is on the head (row is meaningful)
       - The entries are all taken with "good" readings from the sensors (row is accurate)    
     """
+    
+    ## Create a directory to insert newly cleaned files into, if not already created
+    os.makedirs(f'{new_folder}', exist_ok = True)
 
     ## Reading in dataset
-    df = pd.read_csv(f'dataset/Mendeley/Subject_0{subject_num}/rec0{record_num}_subject_0{subject_num}.csv')
+    df = pd.read_csv(f'{filepath}/{filename}.csv')
 
     ## Creating time-based indices using the `TimeStamp` column
     df['TimeStamp'] = pd.to_datetime(df['TimeStamp'], format='%Y-%m-%d %H:%M:%S.%f')
@@ -112,14 +113,11 @@ def muse_clean(subject_num: int, record_num: int) -> None:
     df = df[(df["HeadBandOn"] == 1) & (df["HSI_TP9"] == 1) & (df["HSI_AF7"] == 1) & (df["HSI_AF8"] == 1) & (df["HSI_TP10"] == 1)]
 
 
-    ## Change current working directory to the correct subject's folder
-    os.chdir(f"dataset/Mendeley/Subject_0{subject_num}")
-
+    ## Change directory to the newly outputted folder
+    os.chdir(f"{new_folder}")
+    
     ## Download dataset into current working directory (Mendeley)
-    df.to_csv(f"rec0{record_num}_subject0{subject_num}_cleaned.csv")
+    df.to_csv(f"subject0{subject_num}_label0{record_num}_cleaned.csv")
 
-    ## Return to root directory
-    os.chdir(f"../../..")
-
-
-muse_clean(1, 1)
+    ## Return to the starting directory
+    os.chdir('..')
