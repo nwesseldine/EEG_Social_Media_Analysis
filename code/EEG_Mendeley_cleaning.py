@@ -30,8 +30,8 @@ import pandas as pd
 import os
 
 ## Reading in dataset (singular)
-os.chdir('dataset/Mendeley')
-df = pd.read_csv('Subject_01/rec01_subject_01.csv')
+#os.chdir('dataset/Mendeley')
+df = pd.read_csv('dataset/Mendeley/Subject_01/rec01_subject_01.csv')
 
 ## Exploratory Data Analysis
 """ 
@@ -86,8 +86,12 @@ def muse_clean(subject_num: int, record_num: int) -> None:
     """
 
     ## Change directory to read in dataset
-    os.chdir('dataset/Mendeley')
-    df = pd.read_csv(f'Subject_0{subject_num}/rec0{record_num}_subject_0{subject_num}.csv')
+    try:
+        os.chdir(f'dataset/Mendeley/Subject_0{subject_num}')
+    except FileNotFoundError:
+        pass
+    
+    df = pd.read_csv(f'rec0{record_num}_subject_0{subject_num}.csv')
 
     ## Creating time-based indices using the `TimeStamp` column
     df['TimeStamp'] = pd.to_datetime(df['TimeStamp'], format='%Y-%m-%d %H:%M:%S.%f')
@@ -115,6 +119,4 @@ def muse_clean(subject_num: int, record_num: int) -> None:
 
     ## Download dataset into current working directory (Mendeley)
     df.to_csv(f"rec0{record_num}_subject0{subject_num}_cleaned.csv")
-
-
 
