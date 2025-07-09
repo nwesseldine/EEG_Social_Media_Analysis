@@ -85,13 +85,8 @@ def muse_clean(subject_num: int, record_num: int) -> None:
       - The entries are all taken with "good" readings from the sensors (row is accurate)    
     """
 
-    ## Change directory to read in dataset
-    try:
-        os.chdir(f'dataset/Mendeley/Subject_0{subject_num}')
-    except FileNotFoundError:
-        pass
-    
-    df = pd.read_csv(f'rec0{record_num}_subject_0{subject_num}.csv')
+    ## Reading in dataset
+    df = pd.read_csv(f'dataset/Mendeley/Subject_0{subject_num}/rec0{record_num}_subject_0{subject_num}.csv')
 
     ## Creating time-based indices using the `TimeStamp` column
     df['TimeStamp'] = pd.to_datetime(df['TimeStamp'], format='%Y-%m-%d %H:%M:%S.%f')
@@ -117,6 +112,12 @@ def muse_clean(subject_num: int, record_num: int) -> None:
     df.dropna(subset = relevant_columns, inplace = True)
     df = df[(df["HeadBandOn"] == 1) & (df["HSI_TP9"] == 1) & (df["HSI_AF7"] == 1) & (df["HSI_AF8"] == 1) & (df["HSI_TP10"] == 1)]
 
+
+    ## Change current working directory to the correct subject's folder
+    os.chdir(f"dataset/Mendeley/Subject_0{subject_num}")
+
     ## Download dataset into current working directory (Mendeley)
     df.to_csv(f"rec0{record_num}_subject0{subject_num}_cleaned.csv")
 
+    ## Return to root directory
+    os.chdir(f"../../..")
