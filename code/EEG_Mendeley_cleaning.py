@@ -50,6 +50,10 @@ print(df.value_counts('HSI_TP9', dropna = False))
 
 
 # -------------------------------------------------------------------------------------------------------------------------------
+## Package imports
+import os
+import pandas as pd
+
 
 ## Create a function with the above code that takes in a file path, returning a "cleaned" dataset according to the above criteria
 def muse_clean(filepath: str, filename: str, subject_id: str, record_id: str, new_folder: str = 'cleaned datasets') -> None:
@@ -66,7 +70,7 @@ def muse_clean(filepath: str, filename: str, subject_id: str, record_id: str, ne
     """
     
     ## Create a directory to insert newly cleaned files into, if not already created
-    os.makedirs(f'{new_folder}', exist_ok = True)
+    os.makedirs(f'cleaned datasets/{new_folder}', exist_ok = True)
 
     ## Reading in dataset
     df = pd.read_csv(f'{filepath}/{filename}.csv')
@@ -96,10 +100,10 @@ def muse_clean(filepath: str, filename: str, subject_id: str, record_id: str, ne
 
 
     ## Change directory to the newly outputted folder
-    os.chdir(f"{new_folder}")
+    os.chdir(f"../cleaned datasets/{new_folder}")
     
     ## Download dataset into current working directory (Mendeley)
     df.to_csv(f"subject{subject_id}_label_{record_id}_cleaned.csv")
 
     ## Return to the starting directory
-    os.chdir('..')
+    os.chdir('../../code')
