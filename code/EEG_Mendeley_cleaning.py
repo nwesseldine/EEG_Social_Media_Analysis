@@ -31,7 +31,7 @@ import os
 
 ## Reading in dataset (singular)
 #os.chdir('dataset/Mendeley')
-df = pd.read_csv('datasets/Mendeley/Subject_01/rec01_subject_01.csv')
+df = pd.read_csv('raw datasets/Mendeley/Subject_01/rec01_subject_01.csv')
 
 ## Exploratory Data Analysis
 """ 
