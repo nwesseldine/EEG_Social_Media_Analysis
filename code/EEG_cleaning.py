@@ -76,8 +76,9 @@ def muse_clean(filepath: str, filename: str, subject_id: str, record_id: str, ne
     df = pd.read_csv(f'{filepath}/{filename}')
 
     ## Creating time-based indices using the `TimeStamp` column
-    df['TimeStamp'] = pd.to_datetime(df['TimeStamp'], format='%Y-%m-%d %H:%M:%S.%f')
-    df.set_index('TimeStamp', inplace = True)
+    df['timestamp'] = pd.to_datetime(df['TimeStamp'], format='%Y-%m-%d %H:%M:%S.%f')
+    df['timestamp'] = df['timestamp'].astype('int64') / 1e9 
+    df.set_index('timestamp', inplace = True)
 
 
     ## Removing observations with no data, and observations no change compared to the previous observation
