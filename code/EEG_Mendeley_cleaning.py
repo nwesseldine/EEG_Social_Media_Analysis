@@ -98,6 +98,11 @@ def muse_clean(filepath: str, filename: str, subject_id: str, record_id: str, ne
     df.drop(drop_list, axis = 0, inplace = True)
     df = df[(df["HeadBandOn"] == 1) & (df["HSI_TP9"] == 1) & (df["HSI_AF7"] == 1) & (df["HSI_AF8"] == 1) & (df["HSI_TP10"] == 1)]
 
+    ## Finalizing final column selection:
+    output_columns = [col for col in df.columns if 'RAW' in col]
+    output_columns.append('AUX_RIGHT')
+    df = df[output_columns]
+
 
     ## Change directory to the newly outputted folder
     os.chdir(f"../cleaned datasets/{new_folder}")
