@@ -70,7 +70,7 @@ df = df[(df["HeadBandOn"] == 1) & (df["HSI_TP9"] == 1) & (df["HSI_AF7"] == 1) & 
 # -------------------------------------------------------------------------------------------------------------------------------
 
 ## Create a function with the above code that takes in a file path, returning a "cleaned" dataset according to the above criteria
-def muse_clean(filepath: str, filename: str, subject_num: int, record_num: int, new_folder: str = 'cleaneddatasets') -> None:
+def muse_clean(filepath: str, filename: str, subject_num: str, record_num: str, new_folder: str = 'cleaneddatasets') -> None:
     """
     Inputs: The subject number (1-5) and the record number (1-3)
     Output: A file output (.csv) that returns a "cleaned" version of the raw data file
@@ -117,7 +117,7 @@ def muse_clean(filepath: str, filename: str, subject_num: int, record_num: int, 
     os.chdir(f"{new_folder}")
     
     ## Download dataset into current working directory (Mendeley)
-    df.to_csv(f"subject0{subject_num}_label0{record_num}_cleaned.csv")
+    df.to_csv(f"subject_{subject_num}_label_{record_num}_cleaned.csv")
 
     ## Return to the starting directory
     os.chdir('..')
