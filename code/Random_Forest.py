@@ -1,3 +1,4 @@
+import os
 from sklearn import tree
 import pandas as pd
 import joblib
@@ -8,7 +9,7 @@ import datetime
 
 # Load the dataset
 
-data = pd.read_csv("dataset/output.csv")
+data = pd.read_csv("featuresets/original_data_2025-07-09_15-30.csv")
 
 X_train, X_test, y_train, y_test = train_test_split(data.drop(axis=1, labels=["Label"]), data["Label"], test_size=0.2, random_state=42)
 
@@ -43,7 +44,9 @@ plt.show()
 # Save the trained model
 today = datetime.datetime.now()
 datetime_str = today.strftime("%Y-%m-%d_%H-%M")
+os.makedirs('models', exist_ok=True)
 joblib.dump(reg, f'models/concentration_rf_reg_model_{datetime_str}.pkl')
+joblib.dump(clf, f'models/concentration_rf_clf_model_{datetime_str}.pkl')
 
 # When you want to load it later
 #reg_loaded = joblib.load('random_forest_model.pkl')
