@@ -7,9 +7,16 @@ from sklearn.ensemble import RandomForestClassifier, RandomForestRegressor
 from matplotlib import pyplot as plt
 import datetime
 
-# Load the dataset
+# Purpose: Training only
+# What it does:
+    # Loads the dataset
+    # Splits data into train/test
+    # Trains both RandomForestClassifier and RandomForestRegressor
+    # Evaluates models on test set
+    # Saves the trained models with timestamps
+    # Prints model performance and save locations
 
-data = pd.read_csv("featuresets/original_data_2025-07-09_15-30.csv")
+data = pd.read_csv("../featuresets/original_data_2025-07-09_15-30.csv")
 
 X_train, X_test, y_train, y_test = train_test_split(data.drop(axis=1, labels=["Label"]), data["Label"], test_size=0.2, random_state=42)
 
@@ -25,28 +32,16 @@ reg_predictions = reg.predict(X_test)
 clf_score = clf.score(X_test, y_test)
 reg_score = reg.score(X_test, y_test)
 
-print(clf_score)
-print(reg_score)
-
-real_data = pd.read_csv("featuresets/original_data_2025-07-09_15-30.csv")
-real_data = real_data.drop(axis=1, labels=["Label"])
-
-real_clf_predictions = clf.predict(real_data)
-real_reg_predictions = reg.predict(real_data)
-
-plt.plot(real_reg_predictions)
-plt.title("Predictions on Real Data")
-plt.xlabel("Sample Index")
-plt.ylabel("Predicted Label")
-plt.show()
-
+print(f"Classification accuracy: {clf_score:.4f}")
+print(f"Regression R² score: {reg_score:.4f}")
 
 # Save the trained model
 today = datetime.datetime.now()
 datetime_str = today.strftime("%Y-%m-%d_%H-%M")
-os.makedirs('models', exist_ok=True)
-joblib.dump(reg, f'models/concentration_rf_reg_model_{datetime_str}.pkl')
-joblib.dump(clf, f'models/concentration_rf_clf_model_{datetime_str}.pkl')
+os.makedirs('../models', exist_ok=True)
+joblib.dump(reg, f'../models/concentration_rf_reg_model_{datetime_str}.pkl')
+joblib.dump(clf, f'../models/concentration_rf_clf_model_{datetime_str}.pkl')
 
-# When you want to load it later
-#reg_loaded = joblib.load('random_forest_model.pkl')
+print(f"Models saved:")
+print(f"  - ../models/concentration_rf_reg_model_{datetime_str}.pkl")
+print(f"  - ../models/concentration_rf_clf_model_{datetime_str}.pkl")
