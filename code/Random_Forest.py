@@ -1,8 +1,10 @@
 from sklearn import tree
 import pandas as pd
+import joblib
 from sklearn.model_selection import train_test_split
 from sklearn.ensemble import RandomForestClassifier, RandomForestRegressor
 from matplotlib import pyplot as plt
+import datetime
 
 # Load the dataset
 
@@ -36,3 +38,12 @@ plt.title("Predictions on Real Data")
 plt.xlabel("Sample Index")
 plt.ylabel("Predicted Label")
 plt.show()
+
+
+# Save the trained model
+today = datetime.datetime.now()
+datetime_str = today.strftime("%Y-%m-%d_%H-%M")
+joblib.dump(reg, f'models/concentration_rf_reg_model_{datetime_str}.pkl')
+
+# When you want to load it later
+#reg_loaded = joblib.load('random_forest_model.pkl')
