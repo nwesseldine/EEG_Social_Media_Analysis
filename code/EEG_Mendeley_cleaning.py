@@ -50,6 +50,10 @@ print(df.value_counts('HSI_TP9', dropna = False))
 
 
 # -------------------------------------------------------------------------------------------------------------------------------
+## Package imports
+import os
+import pandas as pd
+
 
 ## Create a function with the above code that takes in a file path, returning a "cleaned" dataset according to the above criteria
 def muse_clean(filepath: str, filename: str, subject_id: str, record_id: str, new_folder: str = 'cleaned datasets') -> None:
