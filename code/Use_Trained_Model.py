@@ -7,8 +7,8 @@ import glob
 # Load the most recent trained models
 def load_latest_models():
     # Find the most recent model files
-    reg_models = glob.glob('../models/concentration_rf_reg_model_*.pkl')
-    clf_models = glob.glob('../models/concentration_rf_clf_model_*.pkl')
+    reg_models = glob.glob('models/concentration_rf_reg_model_*.pkl')
+    clf_models = glob.glob('models/concentration_rf_clf_model_*.pkl')
     
     if not reg_models or not clf_models:
         raise FileNotFoundError("No trained models found in the models directory")
@@ -27,7 +27,7 @@ def load_latest_models():
 
 # Load real data for prediction
 def load_real_data():
-    real_data = pd.read_csv("../featuresets/original_data_2025-07-09_15-30.csv")
+    real_data = pd.read_csv("featuresets/local datasets_2025-07-10_16-45.csv")
     # Remove the label column for prediction
     real_data_features = real_data.drop(axis=1, labels=["Label"])
     return real_data_features
