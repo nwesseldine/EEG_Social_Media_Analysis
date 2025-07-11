@@ -874,8 +874,8 @@ def generate_feature_vectors_from_samples(file_path, nsamples, period,
 		
 		if previous_vector is not None:
 			# If there is a previous vector, the script concatenates the two 
-			# vectors and adds the result to the output matrix
-			feature_vector = np.hstack([previous_vector, r])
+			# vectors with the timestamp and adds the result to the output matrix
+			feature_vector = np.hstack([[t], previous_vector, r])
 			
 			if ret is None:
 				ret = feature_vector.reshape(1, -1)
@@ -888,7 +888,7 @@ def generate_feature_vectors_from_samples(file_path, nsamples, period,
 			 # Remove the label (last column) of previous vector
 			previous_vector = previous_vector[:-1] 
 
-	feat_names = ["lag1_" + s for s in headers[:-1]] + headers
+	feat_names = ["Timestep"] + ["lag1_" + s for s in headers[:-1]] + headers
 	
 	if remove_redundant:
 		# Remove redundant lag window features
@@ -907,7 +907,7 @@ def generate_feature_vectors_from_samples(file_path, nsamples, period,
 	
 
 	# Return
-	return ret, feat_names, timesteps
+	return ret, feat_names
 
 
 
