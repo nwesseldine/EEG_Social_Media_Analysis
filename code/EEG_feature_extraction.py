@@ -874,7 +874,7 @@ def generate_feature_vectors_from_samples(file_path, nsamples, period,
 			feature_vector = np.hstack([previous_vector, r])
 			
 			if ret is None:
-				ret = feature_vector
+				ret = feature_vector.reshape(1, -1)
 			else:
 				ret = np.vstack([ret, feature_vector])
 				
@@ -892,13 +892,15 @@ def generate_feature_vectors_from_samples(file_path, nsamples, period,
 		         "lag1_max_q3_", "lag1_max_q4_", "lag1_max_d_q3q4_",
 				 "lag1_min_q3_", "lag1_min_q4_", "lag1_min_d_q3q4_"]
 		
-		# Remove redundancies
+		#Remove redundancies
 		for i in range(len(to_rm)):
 			for j in range(ry.shape[1]):
 				rm_str = to_rm[i] + str(j)
 				idx = feat_names.index(rm_str)
 				feat_names.pop(idx)
 				ret = np.delete(ret, idx, axis = 1)
+		
+	
 
 	# Return
 	return ret, feat_names
