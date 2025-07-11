@@ -836,6 +836,9 @@ def generate_feature_vectors_from_samples(file_path, nsamples, period,
 	
 	# Initialise empty return object
 	ret = None
+
+	# Create a list to store the time values for each new row in seconds
+	timesteps = []
 	
 	# Until an exception is raised or a stop condition is met
 	while True:
@@ -859,6 +862,7 @@ def generate_feature_vectors_from_samples(file_path, nsamples, period,
 								 t = s[:, 0], axis = 0)
 		
 		# Slide the slice by 1/2 period
+		timesteps.append(t)
 		t += 0.5 * period
 		
 		
@@ -901,7 +905,7 @@ def generate_feature_vectors_from_samples(file_path, nsamples, period,
 				ret = np.delete(ret, idx, axis = 1)
 
 	# Return
-	return ret, feat_names
+	return ret, feat_names, timesteps
 
 
 
