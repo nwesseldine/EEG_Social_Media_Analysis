@@ -851,10 +851,13 @@ def generate_feature_vectors_from_samples(file_path, nsamples, period,
 			if cols_to_ignore is not None:
 				s = np.delete(s, cols_to_ignore, axis = 1)
 		except IndexError:
+			print("Index break")
 			break
 		if len(s) == 0:
+			print("Empty slice break")
 			break
 		if dur < 0.9 * period:
+			print("Slice too short break")
 			break
 		
 		# Perform the resampling of the vector

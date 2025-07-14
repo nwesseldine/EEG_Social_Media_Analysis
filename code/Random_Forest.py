@@ -16,7 +16,8 @@ import datetime
     # Saves the trained models with timestamps
     # Prints model performance and save locations
 
-data = pd.read_csv("../featuresets/original_data_2025-07-09_15-30.csv")
+dataset_name = "Mendeley"
+data = pd.read_csv("featuresets/Mendeley cleaned_2025-07-11_13-52.csv").drop(labels="Timestep", axis=1)
 
 X_train, X_test, y_train, y_test = train_test_split(data.drop(axis=1, labels=["Label"]), data["Label"], test_size=0.2, random_state=42)
 
@@ -38,10 +39,9 @@ print(f"Regression R² score: {reg_score:.4f}")
 # Save the trained model
 today = datetime.datetime.now()
 datetime_str = today.strftime("%Y-%m-%d_%H-%M")
-os.makedirs('../models', exist_ok=True)
-joblib.dump(reg, f'../models/concentration_rf_reg_model_{datetime_str}.pkl')
-joblib.dump(clf, f'../models/concentration_rf_clf_model_{datetime_str}.pkl')
+joblib.dump(reg, f'models/{dataset_name}_rf_reg_model_{datetime_str}.pkl')
+joblib.dump(clf, f'models/{dataset_name}_rf_clf_model_{datetime_str}.pkl')
 
 print(f"Models saved:")
-print(f"  - ../models/concentration_rf_reg_model_{datetime_str}.pkl")
-print(f"  - ../models/concentration_rf_clf_model_{datetime_str}.pkl")
+print(f"  - models/Mendeley_rf_reg_model_{datetime_str}.pkl")
+print(f"  - models/Mendeley_rf_clf_model_{datetime_str}.pkl")
