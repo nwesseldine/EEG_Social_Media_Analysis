@@ -4,26 +4,40 @@ import joblib
 from matplotlib import pyplot as plt
 import glob
 
-# Load the most recent trained models
-def load_latest_models():
-    # Find the most recent model files
+# Load all trained models
+def load_all_models():
+    # Find all model files
     reg_models = glob.glob('models/concentration_rf_reg_model_*.pkl')
     clf_models = glob.glob('models/concentration_rf_clf_model_*.pkl')
     
     if not reg_models or not clf_models:
         raise FileNotFoundError("No trained models found in the models directory")
     
-    # Get the most recent models (sorted by filename which includes timestamp)
-    latest_reg_model = sorted(reg_models)[-1]
-    latest_clf_model = sorted(clf_models)[-1]
+    # Sort models by filename (which includes timestamp)
+    reg_models = sorted(reg_models)
+    clf_models = sorted(clf_models)
     
-    print(f"Loading regression model: {latest_reg_model}")
-    print(f"Loading classification model: {latest_clf_model}")
+    print(f"Found {len(reg_models)} regression models:")
+    for model in reg_models:
+        print(f"  - {model}")
     
-    reg_loaded = joblib.load(latest_reg_model)
-    clf_loaded = joblib.load(latest_clf_model)
+    print(f"Found {len(clf_models)} classification models:")
+    for model in clf_models:
+        print(f"  - {model}")
     
-    return reg_loaded, clf_loaded
+    # Load all regression models
+    reg_loaded_models = []
+    for model_path in reg_models:
+        print(f"Loading regression model: {model_path}")
+        reg_loaded_models.append(joblib.load(model_path))
+    
+    # Load all classification models
+    clf_loaded_models = []
+    for model_path in clf_models:
+        print(f"Loading classification model: {model_path}")
+        clf_loaded_models.append(joblib.load(model_path))
+    
+    return reg_loaded_models, clf_loaded_models, reg_models, clf_models
 
 # Load real data for prediction
 def load_real_data():
@@ -34,38 +48,57 @@ def load_real_data():
 
 # Make predictions and visualize
 def predict_and_visualize():
-    # Load the trained models
-    reg_model, clf_model = load_latest_models()
+    # Load all trained models
+    reg_models, clf_models, reg_model_names, clf_model_names = load_all_models()
     
     # Load real data
     real_data = load_real_data()
     
-    # Make predictions
-    real_clf_predictions = clf_model.predict(real_data)
-    real_reg_predictions = reg_model.predict(real_data)
+    # Make predictions with all models
+    all_reg_predictions = []
+    all_clf_predictions = []
     
-    print(f"Classification predictions shape: {real_clf_predictions.shape}")
-    print(f"Regression predictions shape: {real_reg_predictions.shape}")
+    print("\nMaking predictions with regression models:")
+    for i, (model, model_name) in enumerate(zip(reg_models, reg_model_names)):
+        predictions = model.predict(real_data)
+        all_reg_predictions.append(predictions)
+        print(f"  Model {i+1} ({model_name}): predictions shape {predictions.shape}")
     
-    # Visualize regression predictions
-    plt.figure(figsize=(12, 6))
+    print("\nMaking predictions with classification models:")
+    for i, (model, model_name) in enumerate(zip(clf_models, clf_model_names)):
+        predictions = model.predict(real_data)
+        all_clf_predictions.append(predictions)
+        print(f"  Model {i+1} ({model_name}): predictions shape {predictions.shape}")
     
-    plt.subplot(1, 2, 1)
-    plt.plot(real_reg_predictions)
-    plt.title("Regression Predictions on Real Data")
-    plt.xlabel("Sample Index")
-    plt.ylabel("Predicted Label")
+    # Visualize predictions from all models
+    num_reg_models = len(all_reg_predictions)
+    num_clf_models = len(all_clf_predictions)
     
-    plt.subplot(1, 2, 2)
-    plt.plot(real_clf_predictions)
-    plt.title("Classification Predictions on Real Data")
-    plt.xlabel("Sample Index")
-    plt.ylabel("Predicted Class")
+    # Create subplots for regression models
+    if num_reg_models > 0:
+        plt.figure(figsize=(15, 5 * num_reg_models))
+        for i, (predictions, model_name) in enumerate(zip(all_reg_predictions, reg_model_names)):
+            plt.subplot(num_reg_models, 1, i + 1)
+            plt.plot(predictions)
+            plt.title(f"Regression Predictions - {os.path.basename(model_name)}")
+            plt.xlabel("Sample Index")
+            plt.ylabel("Predicted Label")
+        plt.tight_layout()
+        plt.show()
     
-    plt.tight_layout()
-    plt.show()
+    # Create subplots for classification models
+    if num_clf_models > 0:
+        plt.figure(figsize=(15, 5 * num_clf_models))
+        for i, (predictions, model_name) in enumerate(zip(all_clf_predictions, clf_model_names)):
+            plt.subplot(num_clf_models, 1, i + 1)
+            plt.plot(predictions)
+            plt.title(f"Classification Predictions - {os.path.basename(model_name)}")
+            plt.xlabel("Sample Index")
+            plt.ylabel("Predicted Class")
+        plt.tight_layout()
+        plt.show()
     
-    return real_clf_predictions, real_reg_predictions
+    return all_clf_predictions, all_reg_predictions
 
 if __name__ == "__main__":
     clf_predictions, reg_predictions = predict_and_visualize()
