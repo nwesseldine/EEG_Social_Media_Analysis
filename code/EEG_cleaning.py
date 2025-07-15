@@ -66,7 +66,10 @@ def muse_clean(filepath: str, filename: str, subject_id: str, record_id: str, ne
 
       - The entries in this row are all different from the previous rows (row is unique)
       - The majority of entries contain values, headband is on the head (row is meaningful)
-      - The entries are all taken with "good" readings from the sensors (row is accurate)    
+      - The entries are all taken with "good" readings from the sensors (row is accurate) 
+
+    raw - determines if in this particular cleaning we're using the raw measurements or
+        the averaged measurements across each of the bands (Alpha, Beta, etc.) as calculated by the Muse headband   
     """
     
     ## Create a directory to insert newly cleaned files into, if not already created
@@ -78,6 +81,8 @@ def muse_clean(filepath: str, filename: str, subject_id: str, record_id: str, ne
     ## Creating time-based indices using the `TimeStamp` column
     df['timestamp'] = pd.to_datetime(df['TimeStamp'], format='%Y-%m-%d %H:%M:%S.%f')
     df['timestamp'] = df['timestamp'].astype('int64') / 1e9 
+    
+    # Don't forget that this will be the index, and will be necessary for the feature extraction
     df.set_index('timestamp', inplace = True)
 
 
@@ -100,8 +105,16 @@ def muse_clean(filepath: str, filename: str, subject_id: str, record_id: str, ne
     df = df[(df["HeadBandOn"] == 1) & (df["HSI_TP9"] == 1) & (df["HSI_AF7"] == 1) & (df["HSI_AF8"] == 1) & (df["HSI_TP10"] == 1)]
 
     ## Finalizing final column selection:
-    output_columns = [col for col in df.columns if 'RAW' in col]
-    output_columns.append('AUX_RIGHT')
+    df["Delta_Aggregate"] = df.filter(regex="^Delta_").mean(axis=1)
+    df["Theta_Aggregate"] = df.filter(regex="^Theta_").mean(axis=1)
+    df["Alpha_Aggregate"] = df.filter(regex="^Alpha_").mean(axis=1)
+    df["Beta_Aggregate"] = df.filter(regex="^Beta_").mean(axis=1)
+    df["Gamma_Aggregate"] = df.filter(regex="^Gamma_").mean(axis=1)
+
+    agg_columns = ["Delta_Aggregate", "Theta_Aggregate", "Alpha_Aggregate", "Beta_Aggregate", "Gamma_Aggregate"]
+
+    output_columns = [col for col in df.columns if 'RAW' in col] + agg_columns
+
     df = df[output_columns]
 
 
