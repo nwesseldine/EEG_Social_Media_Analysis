@@ -102,6 +102,8 @@ def muse_clean(filepath: str, filename: str, subject_id: str, record_id: str, ne
             previous_row = current_row
 
     df.drop(drop_list, axis = 0, inplace = True)
+    print(f"Removed {len(drop_list)} rows with no data or no change compared to previous rows.")
+    print(drop_list)
     df = df[(df["HeadBandOn"] == 1) & (df["HSI_TP9"] == 1) & (df["HSI_AF7"] == 1) & (df["HSI_AF8"] == 1) & (df["HSI_TP10"] == 1)]
 
     ## Finalizing final column selection:

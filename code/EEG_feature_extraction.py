@@ -839,6 +839,12 @@ def generate_feature_vectors_from_samples(file_path, nsamples, period,
 
 	# Create a list to store the time values for each new row in seconds
 	timesteps = []
+
+	# Stores the first and last time steps in the file, to be used as a stop condition
+	start_timestep = matrix[0, 0]
+	end_timestep = matrix[-1, 0]
+	#print("Start timestep: ", start_timestep)
+	#print("End timestep: ", end_timestep)
 	
 	# Until an exception is raised or a stop condition is met
 	while True:
@@ -846,19 +852,29 @@ def generate_feature_vectors_from_samples(file_path, nsamples, period,
 		# duration of 'period'
 		# If an exception is raised or the slice is not as long as we expected, 
 		# return the current data available
+		#print("Comparing", start_timestep + t, end_timestep)
+		if start_timestep + t + 0.5 >= end_timestep: # Break if we are supposed to be at the end of the file
+			print("End of recording break")
+			break
 		try:
 			s, dur = get_time_slice(matrix, start = t, period = period)
 			if cols_to_ignore is not None:
 				s = np.delete(s, cols_to_ignore, axis = 1)
-		except IndexError:
+			slice_end = s[-1, 0]
+			#print("Slice end: ", slice_end)
+			#print(t)
+		except IndexError as e:
 			print("Index break")
-			break
+			t += 0.5 * period
+			continue
 		if len(s) == 0:
 			print("Empty slice break")
 			break
-		if dur < 0.9 * period:
+		if dur < 0.9 * period or len(s) < 4:
 			print("Slice too short break")
-			break
+			t += 0.5 * period
+			continue
+		
 		
 		# Perform the resampling of the vector
 		ry, rx = scipy.signal.resample(s[:, 1:], num = nsamples, 
