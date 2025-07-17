@@ -16,8 +16,8 @@ import datetime
     # Saves the trained models with timestamps
     # Prints model performance and save locations
 
-dataset_name = "Mendeley"
-data = pd.read_csv("featuresets/Mendeley cleaned_2025-07-11_13-52.csv").drop(labels="Timestep", axis=1)
+dataset_name = "Emotions"
+data = pd.read_csv("featuresets\Emotion cleaned_2025-07-17_10-05.csv").drop(labels="Timestep", axis=1)
 
 X_train, X_test, y_train, y_test = train_test_split(data.drop(axis=1, labels=["Label"]), data["Label"], test_size=0.2, random_state=42)
 
@@ -43,5 +43,5 @@ joblib.dump(reg, f'models/{dataset_name}_rf_reg_model_{datetime_str}.pkl')
 joblib.dump(clf, f'models/{dataset_name}_rf_clf_model_{datetime_str}.pkl')
 
 print(f"Models saved:")
-print(f"  - models/Mendeley_rf_reg_model_{datetime_str}.pkl")
-print(f"  - models/Mendeley_rf_clf_model_{datetime_str}.pkl")
+print(f"  - models/{dataset_name}_rf_reg_model_{datetime_str}.pkl")
+print(f"  - models/{dataset_name}_rf_clf_model_{datetime_str}.pkl")
