@@ -82,9 +82,22 @@ def muse_clean(filepath: str, filename: str, subject_id: str, record_id: str, ne
     df['timestamp'] = pd.to_datetime(df['TimeStamp'], format='%Y-%m-%d %H:%M:%S.%f')
     df['timestamp'] = df['timestamp'].astype('int64') / 1e9 
     
+
+    ## If it's an emotions dataset, chop out the emotionally significant moments
+    if "Key_Moments" in df.columns:
+        print("Processing as an Emotions dataset...")
+        key_moment_timestamps = df[df["Key_Moments"] == 1].timestamp.tolist()
+        print(f"Key moments found at timestamps: {key_moment_timestamps}")
+        key_moment_timestamps = [df.timestamp[0]] + key_moment_timestamps # Adds the first timestamp as an emotional marker as well
+        key_moment_intervals = [[timestamp, timestamp + 10] for timestamp in key_moment_timestamps] # 10 seconds after each key moment
+        mask = pd.Series(False, index=df.index)
+        # Gets the rows that are within the 10 second intervals
+        for low, high in key_moment_intervals:
+            mask |= (df["timestamp"] >= low) & (df["timestamp"] <= high) 
+        df = df[mask]
+
     # Don't forget that this will be the index, and will be necessary for the feature extraction
     df.set_index('timestamp', inplace = True)
-
 
     ## Removing observations with no data, and observations no change compared to the previous observation
 
