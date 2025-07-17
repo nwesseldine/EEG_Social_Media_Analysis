@@ -6,6 +6,7 @@ from sklearn.model_selection import train_test_split
 from sklearn.ensemble import RandomForestClassifier, RandomForestRegressor
 from matplotlib import pyplot as plt
 import datetime
+from sklearn.utils import resample
 
 # Purpose: Training only
 # What it does:
@@ -17,7 +18,32 @@ import datetime
     # Prints model performance and save locations
 
 dataset_name = "Emotions"
-data = pd.read_csv("featuresets\Emotion cleaned_2025-07-17_10-05.csv").drop(labels="Timestep", axis=1)
+data = pd.read_csv("featuresets\Emotion cleaned_2025-07-17_10-05.csv", nrows=5000).drop(labels="Timestep", axis=1)
+
+classes = data["Label"].unique()
+print(f"Classes found: {classes}")
+
+for x in classes:
+    print(f"Class {x} has {len(data[data['Label'] == x])} samples")
+
+print("Downsampling...")
+
+smallest_class_size = min([len(data[data["Label"] == x]) for x in classes])
+downsample_chunks = []
+
+for x in classes:
+    # Downsample each class
+    df_downsampled = resample(
+        data[data["Label"] == x],
+        replace=False,                     # no bootstrapping
+        n_samples=smallest_class_size,        # match minority size
+        random_state=42
+    )
+    downsample_chunks.append(df_downsampled)
+
+data = pd.concat(downsample_chunks)
+
+
 
 X_train, X_test, y_train, y_test = train_test_split(data.drop(axis=1, labels=["Label"]), data["Label"], test_size=0.2, random_state=42)
 
