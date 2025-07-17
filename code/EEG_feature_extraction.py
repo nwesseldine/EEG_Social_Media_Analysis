@@ -765,6 +765,8 @@ def calc_feature_vector(matrix, state):
 		var_values = np.hstack([var_values, np.array([state])])
 		var_names += ['Label']
 
+	var_values = var_values.real # Ensure that the values are real, in case of complex numbers
+
 	return var_values, var_names
 
 
